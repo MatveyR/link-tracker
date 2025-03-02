@@ -1,5 +1,6 @@
 package backend.academy.bot;
 
+import backend.academy.bot.Configs.BotConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
