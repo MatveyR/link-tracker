@@ -29,6 +29,21 @@ public enum HumanMessages {
     ),
     TRACK_LINK_COMPLETED(
         "Отлично! Отслеживание на ссылку установлено"
+    ),
+    LINKS_HEADER(
+        "Ваши отслеживаемые ссылки:"
+    ),
+    UNTRACK_ERROR(
+        "Вы не подписаны на такую ссылку"
+    ),
+    UNTRACK_COMPLETED(
+        "Ссылка удалена из отслеживания"
+    ),
+    LIST_ERROR(
+        "Ошибка при получении списка ссылок"
+    ),
+    NO_LINKS(
+        "Нет отслеживаемых ссылок"
     );
 
     private final String text;

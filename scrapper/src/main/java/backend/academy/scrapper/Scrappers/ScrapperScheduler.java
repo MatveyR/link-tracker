@@ -10,7 +10,7 @@ import java.util.List;
 public class ScrapperScheduler {
     private final List<Scrapper> scrappers;
 
-    @Scheduled(fixedRateString = "${scrapper.interval:600}")
+    @Scheduled(fixedRateString = "${scrapper.interval}")
     public void runScheduledScrapping() {
         scrappers.forEach(scrapper -> {
             try {

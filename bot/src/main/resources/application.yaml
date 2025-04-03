@@ -1,9 +1,9 @@
 app:
-  telegram-token: ${TELEGRAM_TOKEN} # env variable
+  telegram-token: ${TELEGRAM_TOKEN}
 
 spring:
   application:
-    name: Bot
+    name: ${SPRING_APPLICATION_NAME}
   liquibase:
     enabled: false
   jpa:
@@ -12,9 +12,13 @@ spring:
     open-in-view: false
 
 server:
-  port: 8080
+  port: ${SERVER_PORT}
 
 springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui
+
+scrapper:
+  api:
+    base-url: ${SCRAPPER_API_BASE_URL}

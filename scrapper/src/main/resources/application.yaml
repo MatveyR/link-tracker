@@ -1,12 +1,12 @@
 app:
-  github-token: ${GITHUB_TOKEN} # env variable
+  github-token: ${GITHUB_TOKEN}
   stackoverflow:
     key: ${SO_TOKEN_KEY}
     access-token: ${SO_ACCESS_TOKEN}
 
 spring:
   application:
-    name: Scrapper
+    name: ${SPRING_APPLICATION_NAME}
   liquibase:
     enabled: false
   jpa:
@@ -15,7 +15,7 @@ spring:
     open-in-view: false
 
 server:
-  port: 8081
+  port: ${SERVER_PORT}
 
 springdoc:
   swagger-ui:
@@ -24,4 +24,7 @@ springdoc:
 
 bot:
   api:
-    base-url: "http://localhost:8080"
+    base-url: ${BOT_API_BASE_URL}
+
+scrapper:
+  interval: ${SCRAPPER_INTERVAL}

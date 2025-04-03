@@ -18,7 +18,7 @@ public class ChatService {
         }
 
         if (chatRepository.existsById(chatId)) {
-            throw new IllegalStateException("Чат уже зарегистрирован");
+            throw new IllegalArgumentException("Чат уже зарегистрирован");
         }
 
         Chat chat = new Chat(chatId, LocalDateTime.now());

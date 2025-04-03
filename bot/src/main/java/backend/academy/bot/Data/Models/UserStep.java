@@ -1,4 +1,4 @@
-package backend.academy.bot.Models;
+package backend.academy.bot.Data.Models;
 
 public enum UserStep {
     INIT,

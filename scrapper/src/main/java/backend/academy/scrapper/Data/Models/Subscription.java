@@ -8,7 +8,6 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class Subscription {
-
     Long id;
 
     Long chatId;
@@ -16,9 +15,8 @@ public class Subscription {
     Long linkId;
 
     @Setter
-    List<String> filters;
-
-    @Setter
     List<String> tags;
 
+    @Setter
+    List<String> filters;
 }
