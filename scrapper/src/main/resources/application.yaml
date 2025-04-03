@@ -6,7 +6,7 @@ app:
 
 spring:
   application:
-    name: ${SPRING_APPLICATION_NAME}
+    name: Scrapper
   liquibase:
     enabled: false
   jpa:
@@ -15,7 +15,7 @@ spring:
     open-in-view: false
 
 server:
-  port: ${SERVER_PORT}
+  port: ${SCRAPPER_PORT}
 
 springdoc:
   swagger-ui:

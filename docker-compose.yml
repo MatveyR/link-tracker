@@ -6,6 +6,7 @@ services:
       context: ./scrapper
       dockerfile: Dockerfile
     container_name: scrapper-app
+    env_file: .env
     environment:
       - SERVER_PORT=8081
       - SPRING_APPLICATION_NAME=Scrapper
@@ -23,6 +24,7 @@ services:
       context: ./bot
       dockerfile: Dockerfile
     container_name: telegram-bot
+    env_file: .env
     environment:
       - SERVER_PORT=8080
       - SPRING_APPLICATION_NAME=Bot
