@@ -1,10 +1,4 @@
-![Build](https://github.com/central-university-dev/backend-academy-2025-spring-template/actions/workflows/build.yaml/badge.svg)
-
 # Link Tracker
-
-<!-- этот файл можно и нужно менять -->
-
-Проект сделан в рамках курса Академия Бэкенда.
 
 Приложение для отслеживания обновлений контента по ссылкам.
 При появлении новых событий отправляется уведомление в Telegram.
