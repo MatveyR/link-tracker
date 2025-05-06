@@ -1,22 +1,22 @@
 package backend.academy.scrapper.Data.Models;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import java.util.List;
 
 @AllArgsConstructor
 @Getter
 public class Subscription {
-    Long id;
+    private final Long id;
 
-    Long chatId;
+    private final Long chatId;
 
-    Long linkId;
-
-    @Setter
-    List<String> tags;
+    private final Long linkId;
 
     @Setter
-    List<String> filters;
+    private List<String> tags;
+
+    @Setter
+    private List<String> filters;
 }

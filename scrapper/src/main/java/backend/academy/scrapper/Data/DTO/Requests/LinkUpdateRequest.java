@@ -2,7 +2,7 @@ package backend.academy.scrapper.Data.DTO.Requests;
 
 import java.util.List;
 
-public record LinkUpdate(
+public record LinkUpdateRequest(
     Long id,
     String url,
     String description,

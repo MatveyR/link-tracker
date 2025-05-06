@@ -1,7 +1,7 @@
 package backend.academy.scrapper.Scrappers;
 
 import backend.academy.scrapper.Clients.BotClient;
-import backend.academy.scrapper.Data.DTO.Requests.LinkUpdate;
+import backend.academy.scrapper.Data.DTO.Requests.LinkUpdateRequest;
 import backend.academy.scrapper.Data.Models.Link;
 import backend.academy.scrapper.Data.Repositories.LinkRepository;
 import backend.academy.scrapper.Data.Repositories.SubscriptionRepository;
@@ -25,7 +25,7 @@ public abstract class BaseScrapper implements Scrapper {
         List<Long> chatIds = subscriptionRepository.findUsersByLinkId(link.id());
 
         if (!chatIds.isEmpty()) {
-            LinkUpdate update = new LinkUpdate(
+            LinkUpdateRequest update = new LinkUpdateRequest(
                 link.id(),
                 link.linkUrl(),
                 prepareUpdateMessage(link),

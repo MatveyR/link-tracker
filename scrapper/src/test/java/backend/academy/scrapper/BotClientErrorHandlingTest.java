@@ -2,7 +2,7 @@ package backend.academy.scrapper;
 
 import backend.academy.scrapper.Clients.BotClient;
 import backend.academy.scrapper.Configs.BotClientConfig;
-import backend.academy.scrapper.Data.DTO.Requests.LinkUpdate;
+import backend.academy.scrapper.Data.DTO.Requests.LinkUpdateRequest;
 import backend.academy.scrapper.Exceptions.NotificationException;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ public class BotClientErrorHandlingTest {
     @Test
     public void sendUpdate_WhenServerError_ThrowsNotificationException() {
         // Given
-        LinkUpdate update = new LinkUpdate(1L, "https://example.com", "Test", List.of(123L));
+        LinkUpdateRequest update = new LinkUpdateRequest(1L, "https://example.com", "Test", List.of(123L));
         mockServer.expect(requestTo("/updates"))
             .andRespond(withServerError());
 
@@ -49,7 +49,7 @@ public class BotClientErrorHandlingTest {
     @Test
     public void sendUpdate_WhenInvalidResponse_ThrowsNotificationException() {
         // Given
-        LinkUpdate update = new LinkUpdate(1L, "https://example.com", "Test", List.of(123L));
+        LinkUpdateRequest update = new LinkUpdateRequest(1L, "https://example.com", "Test", List.of(123L));
         mockServer.expect(requestTo("/updates"))
             .andRespond(withSuccess("invalid", MediaType.APPLICATION_JSON));
 

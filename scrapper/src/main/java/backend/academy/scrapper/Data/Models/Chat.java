@@ -1,13 +1,8 @@
 package backend.academy.scrapper.Data.Models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import java.time.LocalDateTime;
+import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
-public class Chat {
-    Long id;
-
-    LocalDateTime creationDate;
+public record Chat(Long id, LocalDateTime creationDate) {
 }
