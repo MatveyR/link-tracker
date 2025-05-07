@@ -59,7 +59,7 @@ public class GitHubScrapper extends BaseScrapper {
                             log.info("Не обновлено: {}", link.linkUrl());
                         }
                     } catch (Exception e) {
-                        log.error("{}", e.getMessage());
+                        log.error("Ошибка проверки обновлений гитхаб: {}", e.getMessage());
                     }
                 });
     }
@@ -103,10 +103,10 @@ public class GitHubScrapper extends BaseScrapper {
             String updatedAt = repoData.path("pushed_at").asText();
             return Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(updatedAt));
         } catch (WebClientResponseException e) {
-            log.error("{}", e.getMessage());
+            log.error("Ошибка при запросе к github: {}", e.getMessage());
             throw new RuntimeException("Ошибка при запросе к GitHub API", e);
         } catch (Exception e) {
-            log.error("{}", e.getMessage());
+            log.error("Ошибка обработки ответа github: {}", e.getMessage());
             throw new RuntimeException("Неизвестная ошибка при обработке ответа Github", e);
         }
     }

@@ -66,7 +66,7 @@ public class StackOverflowScrapper extends BaseScrapper {
             JsonNode jsonNode = new ObjectMapper().readTree(response);
             return checkForUpdates(jsonNode);
         } catch (Exception e) {
-            log.error("{}", e.getMessage());
+            log.error("Ошибка проверки обновлений stackoverflow: {}", e.getMessage());
             return false;
         }
     }

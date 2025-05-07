@@ -52,7 +52,7 @@ public class BotUpdateService {
             };
             bot.execute(new SetMyCommands(commands));
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Ошибка при обработке пользовательской команды: {}", e.getMessage());
         }
     }
 
@@ -62,7 +62,7 @@ public class BotUpdateService {
                     updates.forEach(updateHandler::handleUpdate);
                     return UpdatesListener.CONFIRMED_UPDATES_ALL;
                 },
-                e -> log.error(e.getMessage()));
+                e -> log.error("Ошибка подтверждения обработки обновлений: {}", e.getMessage()));
     }
 
     public void handleIncomingUpdate(LinkUpdateRequest update) {
@@ -71,18 +71,12 @@ public class BotUpdateService {
         }
 
         String message = formatUpdateMessage(update);
-        log.info(message);
         update.tgChatIds().forEach(chatId -> sendNotification(chatId, message));
     }
 
     private String formatUpdateMessage(LinkUpdateRequest update) {
         return String.format(
-                """
-                🔔 *Обновление ссылки*
-
-                🔗 [%s](%s)
-                📝 %s
-                """,
+                "🔔 *Обновление ссылки*%n%n🔗 [%s](%s)%n📝 %s%n ",
                 escapeMarkdown(update.url()), update.url(), escapeMarkdown(update.description()));
     }
 
@@ -103,7 +97,7 @@ public class BotUpdateService {
             try {
                 chatClient.deleteChat(chatId);
             } catch (Exception ex) {
-                log.error(ex.getMessage());
+                log.error("Ошибка удаления чата: {}", ex.getMessage());
             }
         }
     }

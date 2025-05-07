@@ -20,7 +20,7 @@ public class InitState implements FSMState {
         try {
             chatClient.registerChat(fsm.chatId());
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Ошибка при регистрации чата: {}", e.getMessage());
         }
 
         if (input.length < 2 || !input[1].matches(VALID_URL_REGEX)) {
