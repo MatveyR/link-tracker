@@ -22,8 +22,8 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 @Slf4j
 @Service
 public class GitHubScrapper extends BaseScrapper {
-    private static Duration UPDATE_THRESHOLD;
-    private static Duration REQUEST_TIMEOUT;
+    private final Duration UPDATE_THRESHOLD;
+    private final Duration REQUEST_TIMEOUT;
 
     private final ObjectMapper objectMapper;
 
@@ -53,13 +53,13 @@ public class GitHubScrapper extends BaseScrapper {
                 .forEach(link -> {
                     try {
                         if (hasUpdates(link)) {
-                            log.info("Обновлено " + link.linkUrl());
+                            log.info("Обновлено: {}", link.linkUrl());
                             notifySubscribers(link);
                         } else {
-                            log.info("Не обновлено " + link.linkUrl());
+                            log.info("Не обновлено: {}", link.linkUrl());
                         }
                     } catch (Exception e) {
-                        log.error(e.getMessage());
+                        log.error("{}", e.getMessage());
                     }
                 });
     }
@@ -103,10 +103,10 @@ public class GitHubScrapper extends BaseScrapper {
             String updatedAt = repoData.path("pushed_at").asText();
             return Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(updatedAt));
         } catch (WebClientResponseException e) {
-            log.error(e.getMessage());
+            log.error("{}", e.getMessage());
             throw new RuntimeException("Ошибка при запросе к GitHub API", e);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("{}", e.getMessage());
             throw new RuntimeException("Неизвестная ошибка при обработке ответа Github", e);
         }
     }
