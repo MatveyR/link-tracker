@@ -162,6 +162,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>backend.academy.scrapper.ScrapperApplication</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>
