@@ -1,7 +1,15 @@
 package backend.academy.scrapper;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import backend.academy.scrapper.Clients.BotClient;
-import backend.academy.scrapper.Configs.ScrapperPropsConfig;
 import backend.academy.scrapper.Data.Models.Link;
 import backend.academy.scrapper.Data.Repositories.LinkRepository;
 import backend.academy.scrapper.Data.Repositories.SubscriptionRepository;
@@ -14,14 +22,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.reactive.function.client.WebClient;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.argThat;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class BaseScrapperTest {
@@ -44,9 +44,7 @@ public class BaseScrapperTest {
     void setUp() {
         scrapper = new BaseScrapper(webClient, botClient, subscriptionRepository, linkRepository) {
             @Override
-            public void trackUpdates() {
-
-            }
+            public void trackUpdates() {}
 
             @Override
             protected String prepareUpdateMessage(Link link) {
@@ -73,11 +71,10 @@ public class BaseScrapperTest {
         scrapper.notifySubscribers(link);
 
         // Then
-        verify(botClient).sendUpdate(argThat(update ->
-            update.tgChatIds().equals(chatIds) &&
-                update.url().equals(link.linkUrl()) &&
-                update.id().equals(link.id())
-        ));
+        verify(botClient)
+                .sendUpdate(argThat(update -> update.tgChatIds().equals(chatIds)
+                        && update.url().equals(link.linkUrl())
+                        && update.id().equals(link.id())));
     }
 
     @Test

@@ -13,13 +13,11 @@ public class BotClientConfig {
 
     @Bean
     public BotClient botClient(@Value("${bot.api.base-url}") String baseUrl) {
-        RestClient restClient = RestClient.builder()
-            .baseUrl(baseUrl)
-            .build();
+        RestClient restClient = RestClient.builder().baseUrl(baseUrl).build();
 
         return HttpServiceProxyFactory.builder()
-            .exchangeAdapter(RestClientAdapter.create(restClient))
-            .build()
-            .createClient(BotClient.class);
+                .exchangeAdapter(RestClientAdapter.create(restClient))
+                .build()
+                .createClient(BotClient.class);
     }
 }

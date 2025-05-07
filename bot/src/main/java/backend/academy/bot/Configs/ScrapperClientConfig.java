@@ -33,13 +33,11 @@ public class ScrapperClientConfig {
     }
 
     private <T> T createClient(String baseUrl, Class<T> clientType) {
-        RestClient restClient = RestClient.builder()
-            .baseUrl(baseUrl)
-            .build();
+        RestClient restClient = RestClient.builder().baseUrl(baseUrl).build();
 
         return HttpServiceProxyFactory.builder()
-            .exchangeAdapter(RestClientAdapter.create(restClient))
-            .build()
-            .createClient(clientType);
+                .exchangeAdapter(RestClientAdapter.create(restClient))
+                .build()
+                .createClient(clientType);
     }
 }

@@ -1,5 +1,10 @@
 package backend.academy.scrapper;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+
 import backend.academy.scrapper.Clients.BotClient;
 import backend.academy.scrapper.Configs.BotClientConfig;
 import backend.academy.scrapper.Data.DTO.Requests.LinkUpdateRequest;
@@ -13,10 +18,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.ResourceAccessException;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RestClientTest
 @Import(BotClientConfig.class)
@@ -33,8 +34,7 @@ public class BotClientErrorHandlingTest {
     public void sendUpdate_WhenServerError_ThrowsNotificationException() {
         // Given
         LinkUpdateRequest update = new LinkUpdateRequest(1L, "https://example.com", "Test", List.of(123L));
-        mockServer.expect(requestTo("/updates"))
-            .andRespond(withServerError());
+        mockServer.expect(requestTo("/updates")).andRespond(withServerError());
 
         // When & Then
         assertThrows(NotificationException.class, () -> {
@@ -50,8 +50,7 @@ public class BotClientErrorHandlingTest {
     public void sendUpdate_WhenInvalidResponse_ThrowsNotificationException() {
         // Given
         LinkUpdateRequest update = new LinkUpdateRequest(1L, "https://example.com", "Test", List.of(123L));
-        mockServer.expect(requestTo("/updates"))
-            .andRespond(withSuccess("invalid", MediaType.APPLICATION_JSON));
+        mockServer.expect(requestTo("/updates")).andRespond(withSuccess("invalid", MediaType.APPLICATION_JSON));
 
         // When & Then
         assertThrows(ResourceAccessException.class, () -> botClient.sendUpdate(update));

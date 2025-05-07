@@ -57,10 +57,12 @@ public class BotUpdateService {
     }
 
     private void initUpdatesListener() {
-        bot.setUpdatesListener(updates -> {
-            updates.forEach(updateHandler::handleUpdate);
-            return UpdatesListener.CONFIRMED_UPDATES_ALL;
-        }, e -> log.error(e.getMessage()));
+        bot.setUpdatesListener(
+                updates -> {
+                    updates.forEach(updateHandler::handleUpdate);
+                    return UpdatesListener.CONFIRMED_UPDATES_ALL;
+                },
+                e -> log.error(e.getMessage()));
     }
 
     public void handleIncomingUpdate(LinkUpdateRequest update) {
@@ -74,22 +76,18 @@ public class BotUpdateService {
     }
 
     private String formatUpdateMessage(LinkUpdateRequest update) {
-        return String.format("""
+        return String.format(
+                """
                 🔔 *Обновление ссылки*
 
                 🔗 [%s](%s)
                 📝 %s
                 """,
-            escapeMarkdown(update.url()),
-            update.url(),
-            escapeMarkdown(update.description())
-        );
+                escapeMarkdown(update.url()), update.url(), escapeMarkdown(update.description()));
     }
 
     private String escapeMarkdown(String text) {
-        return text.replace("*", "\\*")
-            .replace("_", "\\_")
-            .replace("`", "\\`");
+        return text.replace("*", "\\*").replace("_", "\\_").replace("`", "\\`");
     }
 
     private void sendNotification(Long chatId, String message) {

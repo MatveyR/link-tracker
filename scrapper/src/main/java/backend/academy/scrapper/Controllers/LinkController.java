@@ -28,17 +28,13 @@ public class LinkController {
 
     @PostMapping
     public ResponseEntity<LinkResponse> addLink(
-        @RequestHeader("Tg-Chat-Id") Long chatId,
-        @RequestBody AddLinkRequest request
-    ) {
+            @RequestHeader("Tg-Chat-Id") Long chatId, @RequestBody AddLinkRequest request) {
         return ResponseEntity.ok(linkService.addLink(chatId, request));
     }
 
     @DeleteMapping
     public ResponseEntity<LinkResponse> removeLink(
-        @RequestHeader("Tg-Chat-Id") Long chatId,
-        @RequestBody RemoveLinkRequest request
-    ) {
+            @RequestHeader("Tg-Chat-Id") Long chatId, @RequestBody RemoveLinkRequest request) {
         return ResponseEntity.ok(linkService.removeLink(chatId, request));
     }
 }

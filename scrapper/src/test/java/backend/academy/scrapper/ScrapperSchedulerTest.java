@@ -1,7 +1,11 @@
 package backend.academy.scrapper;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.*;
+
 import backend.academy.scrapper.Scrappers.Scrapper;
 import backend.academy.scrapper.Scrappers.ScrapperScheduler;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,11 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -48,8 +47,7 @@ class ScrapperSchedulerTest {
 
     @Test
     void runScheduledScrapping_HandlesExceptions() {
-        doThrow(new RuntimeException("Test error"))
-            .when(scrapper1).trackUpdates();
+        doThrow(new RuntimeException("Test error")).when(scrapper1).trackUpdates();
         doNothing().when(scrapper2).trackUpdates();
 
         assertDoesNotThrow(() -> scheduler.runScheduledScrapping());

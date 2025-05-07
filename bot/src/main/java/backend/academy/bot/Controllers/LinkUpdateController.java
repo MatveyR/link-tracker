@@ -2,7 +2,6 @@ package backend.academy.bot.Controllers;
 
 import backend.academy.bot.Data.DTO.Requests.LinkUpdateRequest;
 import backend.academy.bot.Services.BotUpdateService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;

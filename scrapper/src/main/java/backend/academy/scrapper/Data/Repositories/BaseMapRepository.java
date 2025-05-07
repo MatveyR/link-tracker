@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class BaseMapRepository<T> implements Repository<T, Long> {
     protected final Map<Long, T> storage = new HashMap<>();

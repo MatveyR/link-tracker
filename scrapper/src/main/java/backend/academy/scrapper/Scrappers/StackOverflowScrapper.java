@@ -8,13 +8,13 @@ import backend.academy.scrapper.Data.Repositories.SubscriptionRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import java.time.Duration;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import java.time.Duration;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -25,14 +25,16 @@ public class StackOverflowScrapper extends BaseScrapper {
     private static String STACKOVERFLOW_API_URL;
     private static Duration REQUEST_TIMEOUT;
 
-    public StackOverflowScrapper(WebClient.Builder webClientBuilder,
-                                 BotClient botClient,
-                                 SubscriptionRepository subscriptionRepository,
-                                 LinkRepository linkRepository) {
-        super(webClientBuilder.baseUrl(STACKOVERFLOW_API_URL).build(),
-            botClient,
-            subscriptionRepository,
-            linkRepository);
+    public StackOverflowScrapper(
+            WebClient.Builder webClientBuilder,
+            BotClient botClient,
+            SubscriptionRepository subscriptionRepository,
+            LinkRepository linkRepository) {
+        super(
+                webClientBuilder.baseUrl(STACKOVERFLOW_API_URL).build(),
+                botClient,
+                subscriptionRepository,
+                linkRepository);
     }
 
     @PostConstruct
@@ -44,12 +46,12 @@ public class StackOverflowScrapper extends BaseScrapper {
     @Override
     public void trackUpdates() {
         linkRepository.findAll().stream()
-            .filter(link -> link.linkUrl().contains("stackoverflow.com"))
-            .forEach(link -> {
-                if (hasUpdates(link)) {
-                    notifySubscribers(link);
-                }
-            });
+                .filter(link -> link.linkUrl().contains("stackoverflow.com"))
+                .forEach(link -> {
+                    if (hasUpdates(link)) {
+                        notifySubscribers(link);
+                    }
+                });
     }
 
     @Override
@@ -71,13 +73,14 @@ public class StackOverflowScrapper extends BaseScrapper {
 
     private String fetchQuestionData(Link link) {
         String questionId = extractQuestionId(link.linkUrl());
-        return webClient.get()
-            .uri(uri -> uri.path("/questions/{id}")
-                .queryParam("site", "stackoverflow")
-                .build(questionId))
-            .retrieve()
-            .bodyToMono(String.class)
-            .block(REQUEST_TIMEOUT);
+        return webClient
+                .get()
+                .uri(uri -> uri.path("/questions/{id}")
+                        .queryParam("site", "stackoverflow")
+                        .build(questionId))
+                .retrieve()
+                .bodyToMono(String.class)
+                .block(REQUEST_TIMEOUT);
     }
 
     private String extractQuestionId(String url) {

@@ -14,9 +14,7 @@ public class TrackCommand implements BotCommand {
             return;
         }
 
-        UserFSM fsm = UserFSM.builder()
-            .chatId(chatId)
-            .build();
+        UserFSM fsm = UserFSM.builder().chatId(chatId).build();
 
         handler.userFSMs().put(chatId, fsm);
         handler.handleFsmState(chatId, args);

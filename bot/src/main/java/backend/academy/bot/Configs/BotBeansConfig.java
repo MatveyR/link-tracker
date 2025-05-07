@@ -34,9 +34,8 @@ public class BotBeansConfig {
     }
 
     @Bean
-    public BotUpdateHandler botUpdateHandler(TelegramBot telegramBot,
-                                             UserFSMContext fsmContext,
-                                             CommandFactory commandFactory) {
+    public BotUpdateHandler botUpdateHandler(
+            TelegramBot telegramBot, UserFSMContext fsmContext, CommandFactory commandFactory) {
         return new BotUpdateHandler(telegramBot, fsmContext, commandFactory);
     }
 }

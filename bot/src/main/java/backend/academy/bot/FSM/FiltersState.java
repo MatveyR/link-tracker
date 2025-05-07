@@ -6,8 +6,8 @@ import backend.academy.bot.Data.Models.UserFSM;
 import backend.academy.bot.Data.Models.UserStep;
 import backend.academy.bot.Handlers.BotUpdateHandler;
 import backend.academy.bot.HumanMessages.HumanMessages;
-import lombok.RequiredArgsConstructor;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class FiltersState implements FSMState {
@@ -19,11 +19,7 @@ public class FiltersState implements FSMState {
             fsm.filters(List.of(input));
         }
 
-        AddLinkRequest request = new AddLinkRequest(
-            fsm.link(),
-            fsm.tags(),
-            fsm.filters()
-        );
+        AddLinkRequest request = new AddLinkRequest(fsm.link(), fsm.tags(), fsm.filters());
         linkClient.addLink(fsm.chatId(), request);
 
         context.setState(new CompletedState());

@@ -27,20 +27,15 @@ public class LinkService {
         validateLink(request.link());
 
         Link link = linkRepository.findAll().stream()
-            .filter(l -> l.linkUrl().equals(request.link()))
-            .findFirst()
-            .orElseGet(() -> {
-                Link newLink = new Link(linkRepository.count(), request.link());
-                return linkRepository.save(newLink);
-            });
+                .filter(l -> l.linkUrl().equals(request.link()))
+                .findFirst()
+                .orElseGet(() -> {
+                    Link newLink = new Link(linkRepository.count(), request.link());
+                    return linkRepository.save(newLink);
+                });
 
-        Subscription subscription = new Subscription(
-            subscriptionRepository.count(),
-            chatId,
-            link.id(),
-            request.tags(),
-            request.filters()
-        );
+        Subscription subscription =
+                new Subscription(subscriptionRepository.count(), chatId, link.id(), request.tags(), request.filters());
         subscriptionRepository.save(subscription);
 
         return mapToLinkResponse(link, subscription);
@@ -51,14 +46,14 @@ public class LinkService {
         validateLink(request.link());
 
         Link link = linkRepository.findAll().stream()
-            .filter(l -> l.linkUrl().equals(request.link()))
-            .findFirst()
-            .orElseThrow(() -> new ResourceNotFoundException("Ссылка не найдена"));
+                .filter(l -> l.linkUrl().equals(request.link()))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Ссылка не найдена"));
 
         Subscription subscription = subscriptionRepository.findAll().stream()
-            .filter(s -> s.chatId().equals(chatId) && s.linkId().equals(link.id()))
-            .findFirst()
-            .orElseThrow(() -> new ResourceNotFoundException("Подписка не найдена"));
+                .filter(s -> s.chatId().equals(chatId) && s.linkId().equals(link.id()))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Подписка не найдена"));
 
         subscriptionRepository.deleteById(subscription.id());
 
@@ -70,17 +65,17 @@ public class LinkService {
 
         List<Long> linkIds = subscriptionRepository.findLinksByUserId(chatId);
         List<LinkResponse> links = linkIds.stream()
-            .map(linkRepository::findById)
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .map(link -> {
-                Subscription subscription = subscriptionRepository.findAll().stream()
-                    .filter(s -> s.chatId().equals(chatId) && s.linkId().equals(link.id()))
-                    .findFirst()
-                    .orElseThrow();
-                return mapToLinkResponse(link, subscription);
-            })
-            .toList();
+                .map(linkRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(link -> {
+                    Subscription subscription = subscriptionRepository.findAll().stream()
+                            .filter(s -> s.chatId().equals(chatId) && s.linkId().equals(link.id()))
+                            .findFirst()
+                            .orElseThrow();
+                    return mapToLinkResponse(link, subscription);
+                })
+                .toList();
 
         return new ListLinksResponse(links, links.size());
     }
@@ -107,11 +102,6 @@ public class LinkService {
     }
 
     private LinkResponse mapToLinkResponse(Link link, Subscription subscription) {
-        return new LinkResponse(
-            link.id(),
-            link.linkUrl(),
-            subscription.tags(),
-            subscription.filters()
-        );
+        return new LinkResponse(link.id(), link.linkUrl(), subscription.tags(), subscription.filters());
     }
 }

@@ -19,14 +19,8 @@ public interface LinkClient {
     ListLinksResponse getAllLinks(@RequestHeader(tgChatIdHeader) Long chatId);
 
     @PostExchange
-    LinkResponse addLink(
-        @RequestHeader(tgChatIdHeader) Long chatId,
-        @RequestBody AddLinkRequest request
-    );
+    LinkResponse addLink(@RequestHeader(tgChatIdHeader) Long chatId, @RequestBody AddLinkRequest request);
 
     @DeleteExchange
-    LinkResponse removeLink(
-        @RequestHeader(tgChatIdHeader) Long chatId,
-        @RequestBody RemoveLinkRequest request
-    );
+    LinkResponse removeLink(@RequestHeader(tgChatIdHeader) Long chatId, @RequestBody RemoveLinkRequest request);
 }

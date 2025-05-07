@@ -92,15 +92,14 @@ public class BotUpdateHandler {
         }
 
         StringBuilder sb = new StringBuilder(HumanMessages.LINKS_HEADER.toString());
-        response.links().forEach(link ->
-            sb.append("\n").append(link.url())
-        );
+        response.links().forEach(link -> sb.append("\n").append(link.url()));
         return sb.toString();
     }
 
     private void handleCallback(CallbackQuery callback) {
-        if (SKIP_CALLBACK_DATA.equals(callback.data()) && userFSMs.containsKey(callback.from().id())) {
-            handleFsmState(callback.from().id(), new String[]{SKIP_CALLBACK_DATA});
+        if (SKIP_CALLBACK_DATA.equals(callback.data())
+                && userFSMs.containsKey(callback.from().id())) {
+            handleFsmState(callback.from().id(), new String[] {SKIP_CALLBACK_DATA});
         }
         answerCallback(callback.id());
     }
@@ -110,9 +109,8 @@ public class BotUpdateHandler {
     }
 
     private void sendMessageWithSkipButton(Long chatId, String text) {
-        InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup(
-            new InlineKeyboardButton("Пропустить").callbackData(SKIP_CALLBACK_DATA)
-        );
+        InlineKeyboardMarkup keyboard =
+                new InlineKeyboardMarkup(new InlineKeyboardButton("Пропустить").callbackData(SKIP_CALLBACK_DATA));
         bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
     }
 

@@ -27,17 +27,19 @@ public class GitHubScrapper extends BaseScrapper {
 
     private final ObjectMapper objectMapper;
 
-    public GitHubScrapper(WebClient.Builder webClientBuilder,
-                          BotClient botClient,
-                          SubscriptionRepository subscriptionRepository,
-                          LinkRepository linkRepository,
-                          ObjectMapper objectMapper,
-                          ScrapperPropsConfig propsConfig) {
+    public GitHubScrapper(
+            WebClient.Builder webClientBuilder,
+            BotClient botClient,
+            SubscriptionRepository subscriptionRepository,
+            LinkRepository linkRepository,
+            ObjectMapper objectMapper,
+            ScrapperPropsConfig propsConfig) {
 
-        super(webClientBuilder.baseUrl(propsConfig.github().api_url()).build(),
-            botClient,
-            subscriptionRepository,
-            linkRepository);
+        super(
+                webClientBuilder.baseUrl(propsConfig.github().api_url()).build(),
+                botClient,
+                subscriptionRepository,
+                linkRepository);
 
         this.objectMapper = objectMapper;
         REQUEST_TIMEOUT = Duration.ofSeconds(propsConfig.github().timeout());
@@ -47,19 +49,19 @@ public class GitHubScrapper extends BaseScrapper {
     @Override
     public void trackUpdates() {
         linkRepository.findAll().stream()
-            .filter(link -> link.linkUrl().contains("github.com"))
-            .forEach(link -> {
-                try {
-                    if (hasUpdates(link)) {
-                        log.info("Обновлено " + link.linkUrl());
-                        notifySubscribers(link);
-                    } else {
-                        log.info("Не обновлено " + link.linkUrl());
+                .filter(link -> link.linkUrl().contains("github.com"))
+                .forEach(link -> {
+                    try {
+                        if (hasUpdates(link)) {
+                            log.info("Обновлено " + link.linkUrl());
+                            notifySubscribers(link);
+                        } else {
+                            log.info("Не обновлено " + link.linkUrl());
+                        }
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
                     }
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                }
-            });
+                });
     }
 
     @Override
@@ -77,22 +79,25 @@ public class GitHubScrapper extends BaseScrapper {
     }
 
     private String convertToApiPath(String repoUrl) {
-        return repoUrl.replace("https://github.com/", "/repos/")
-            .replaceAll("/$", "");
+        return repoUrl.replace("https://github.com/", "/repos/").replaceAll("/$", "");
     }
 
     @Retryable(
-        retryFor = {WebClientResponseException.TooManyRequests.class, WebClientResponseException.ServiceUnavailable.class},
-        maxAttempts = 3,
-        backoff = @Backoff(delay = 1000, multiplier = 2))
+            retryFor = {
+                WebClientResponseException.TooManyRequests.class,
+                WebClientResponseException.ServiceUnavailable.class
+            },
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 1000, multiplier = 2))
     private Instant fetchLastUpdateTime(String apiPath) {
         try {
-            String response = webClient.get()
-                .uri(apiPath)
-                .header("Accept", "application/vnd.github.v3+json")
-                .retrieve()
-                .bodyToMono(String.class)
-                .block(REQUEST_TIMEOUT);
+            String response = webClient
+                    .get()
+                    .uri(apiPath)
+                    .header("Accept", "application/vnd.github.v3+json")
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block(REQUEST_TIMEOUT);
 
             JsonNode repoData = objectMapper.readTree(response);
             String updatedAt = repoData.path("pushed_at").asText();

@@ -25,18 +25,16 @@ public abstract class BaseScrapper implements Scrapper {
         List<Long> chatIds = subscriptionRepository.findUsersByLinkId(link.id());
 
         if (!chatIds.isEmpty()) {
-            LinkUpdateRequest update = new LinkUpdateRequest(
-                link.id(),
-                link.linkUrl(),
-                prepareUpdateMessage(link),
-                chatIds
-            );
+            LinkUpdateRequest update =
+                    new LinkUpdateRequest(link.id(), link.linkUrl(), prepareUpdateMessage(link), chatIds);
 
             try {
                 botClient.sendUpdate(update);
             } catch (WebClientResponseException e) {
-                log.error("Http-ошибка при отправке обновления. Статус: {}, Тело ответа: {}",
-                    e.getStatusCode(), e.getResponseBodyAsString());
+                log.error(
+                        "Http-ошибка при отправке обновления. Статус: {}, Тело ответа: {}",
+                        e.getStatusCode(),
+                        e.getResponseBodyAsString());
                 throw new NotificationException("Ошибка взаимодействия с ботом: " + e.getMessage());
             } catch (RuntimeException e) {
                 log.error("Runtime-ошибка при отправке уведомления", e);

@@ -15,10 +15,9 @@ public class GlobalExceptionHandler {
         ResponseStatus responseStatus = ex.getClass().getAnnotation(ResponseStatus.class);
         if (responseStatus != null) {
             HttpStatus status = responseStatus.value();
-            return ResponseEntity.status(status)
-                .body(ApiErrorResponse.fromException(ex, status));
+            return ResponseEntity.status(status).body(ApiErrorResponse.fromException(ex, status));
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(ApiErrorResponse.fromException(ex, HttpStatus.INTERNAL_SERVER_ERROR));
+                .body(ApiErrorResponse.fromException(ex, HttpStatus.INTERNAL_SERVER_ERROR));
     }
 }
