@@ -1,10 +1,11 @@
 package backend.academy.bot.Handlers;
 
-import backend.academy.bot.Clients.LinkClient;
-import backend.academy.bot.Data.DTO.Requests.RemoveLinkRequest;
+import backend.academy.bot.Commands.BotCommand;
+import backend.academy.bot.Commands.CommandFactory;
 import backend.academy.bot.Data.DTO.Responses.ListLinksResponse;
 import backend.academy.bot.Data.Models.UserFSM;
 import backend.academy.bot.Data.Models.UserStep;
+import backend.academy.bot.FSM.UserFSMContext;
 import backend.academy.bot.HumanMessages.HumanMessages;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.CallbackQuery;
@@ -18,12 +19,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 public class BotUpdateHandler {
     private final TelegramBot bot;
-    private final UserFSMHandler fsmHandler;
-    private final LinkClient linkClient;
+    private final UserFSMContext fsmContext;
+    private final CommandFactory commandFactory;
+
+    public static final String SKIP_CALLBACK_DATA = "skip";
 
     @Getter
     private final Map<Long, UserFSM> userFSMs = new ConcurrentHashMap<>();
@@ -59,20 +64,16 @@ public class BotUpdateHandler {
             return;
         }
 
-        switch (parts[0]) {
-            case "/start" -> handleStart(chatId);
-            case "/help" -> handleHelp(chatId);
-            case "/track" -> handleTrack(chatId, parts);
-            case "/untrack" -> handleUntrack(chatId, parts);
-            case "/list" -> handleList(chatId);
-            default -> sendError(chatId);
-        }
+        String commandName = parts[0];
+        log.info(commandName);
+        BotCommand command = commandFactory.getCommand(commandName);
+        command.execute(chatId, parts, this);
     }
 
-    private void handleFsmState(Long chatId, String[] input) {
+    public void handleFsmState(Long chatId, String[] input) {
         UserFSM fsm = userFSMs.get(chatId);
         try {
-            String response = fsmHandler.handleInput(input, fsm);
+            String response = fsmContext.handleInput(input, fsm);
 
             if (fsm.step() == UserStep.COMPLETED) {
                 userFSMs.remove(chatId);
@@ -85,45 +86,7 @@ public class BotUpdateHandler {
         }
     }
 
-    private void handleTrack(Long chatId, String[] parts) {
-        if (parts.length < 2) {
-            sendMessage(chatId, HumanMessages.TRACK_LINK_ERROR.toString());
-            return;
-        }
-
-        UserFSM fsm = UserFSM.builder()
-            .chatId(chatId)
-            .build();
-
-        userFSMs.put(chatId, fsm);
-        handleFsmState(chatId, parts);
-    }
-
-    private void handleUntrack(Long chatId, String[] parts) {
-        if (parts.length < 2) {
-            sendMessage(chatId, HumanMessages.UNTRACK_ERROR.toString());
-            return;
-        }
-
-        try {
-            linkClient.removeLink(chatId, new RemoveLinkRequest(parts[1]));
-            sendMessage(chatId, HumanMessages.UNTRACK_COMPLETED.toString());
-        } catch (Exception e) {
-            sendMessage(chatId, HumanMessages.UNTRACK_ERROR.toString());
-        }
-    }
-
-    private void handleList(Long chatId) {
-        try {
-            ListLinksResponse response = linkClient.getAllLinks(chatId);
-            String message = formatLinksList(response);
-            sendMessage(chatId, message);
-        } catch (Exception e) {
-            sendMessage(chatId, HumanMessages.LIST_ERROR.toString());
-        }
-    }
-
-    private String formatLinksList(ListLinksResponse response) {
+    public String formatLinksList(ListLinksResponse response) {
         if (response.links().isEmpty()) {
             return HumanMessages.NO_LINKS.toString();
         }
@@ -136,36 +99,28 @@ public class BotUpdateHandler {
     }
 
     private void handleCallback(CallbackQuery callback) {
-        if ("skip".equals(callback.data()) && userFSMs.containsKey(callback.from().id())) {
-            handleFsmState(callback.from().id(), new String[]{"skip"});
+        if (SKIP_CALLBACK_DATA.equals(callback.data()) && userFSMs.containsKey(callback.from().id())) {
+            handleFsmState(callback.from().id(), new String[]{SKIP_CALLBACK_DATA});
         }
         answerCallback(callback.id());
     }
 
-    private void sendMessage(Long chatId, String text) {
+    public void sendMessage(Long chatId, String text) {
         bot.execute(new SendMessage(chatId, text));
     }
 
     private void sendMessageWithSkipButton(Long chatId, String text) {
         InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup(
-            new InlineKeyboardButton("Пропустить").callbackData("skip")
+            new InlineKeyboardButton("Пропустить").callbackData(SKIP_CALLBACK_DATA)
         );
         bot.execute(new SendMessage(chatId, text).replyMarkup(keyboard));
     }
 
-    private void sendError(Long chatId) {
+    public void sendError(Long chatId) {
         sendMessage(chatId, HumanMessages.ERROR.toString());
     }
 
     private void answerCallback(String callbackId) {
         bot.execute(new AnswerCallbackQuery(callbackId));
-    }
-
-    private void handleStart(Long chatId) {
-        sendMessage(chatId, HumanMessages.HELLO.toString());
-    }
-
-    private void handleHelp(Long chatId) {
-        sendMessage(chatId, HumanMessages.HELP.toString());
     }
 }

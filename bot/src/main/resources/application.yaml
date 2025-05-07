@@ -1,6 +1,10 @@
 app:
   telegram-token: ${TELEGRAM_TOKEN}
 
+scrapper:
+  api:
+    base-url: ${SCRAPPER_API_BASE_URL:http://localhost:8081}
+
 spring:
   application:
     name: Bot
@@ -12,13 +16,11 @@ spring:
     open-in-view: false
 
 server:
-  port: ${BOT_PORT}
+  port: ${BOT_PORT:8080}
 
 springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui
 
-scrapper:
-  api:
-    base-url: ${SCRAPPER_API_BASE_URL}
+

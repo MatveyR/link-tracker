@@ -1,6 +1,7 @@
 package backend.academy.scrapper;
 
 import backend.academy.scrapper.Clients.BotClient;
+import backend.academy.scrapper.Configs.ScrapperPropsConfig;
 import backend.academy.scrapper.Data.Models.Link;
 import backend.academy.scrapper.Data.Repositories.LinkRepository;
 import backend.academy.scrapper.Data.Repositories.SubscriptionRepository;

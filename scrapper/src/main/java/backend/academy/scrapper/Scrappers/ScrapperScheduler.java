@@ -1,10 +1,15 @@
 package backend.academy.scrapper.Scrappers;
 
+import backend.academy.scrapper.Configs.ScrapperPropsConfig;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ScrapperScheduler {
@@ -16,7 +21,7 @@ public class ScrapperScheduler {
             try {
                 scrapper.trackUpdates();
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                log.error("Ошибка планировщика {}", e.getMessage());
             }
         });
     }

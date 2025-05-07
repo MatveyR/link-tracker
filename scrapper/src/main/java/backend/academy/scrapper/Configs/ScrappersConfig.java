@@ -7,6 +7,7 @@ import backend.academy.scrapper.Scrappers.GitHubScrapper;
 import backend.academy.scrapper.Scrappers.Scrapper;
 import backend.academy.scrapper.Scrappers.StackOverflowScrapper;
 import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -19,9 +20,11 @@ public class ScrappersConfig {
     public GitHubScrapper gitHubScrapper(WebClient.Builder webClientBuilder,
                                          BotClient botClient,
                                          SubscriptionRepository subscriptionRepository,
-                                         LinkRepository linkRepository) {
+                                         LinkRepository linkRepository,
+                                         ObjectMapper objectMapper,
+                                         ScrapperPropsConfig scrapperPropsConfig) {
         return new GitHubScrapper(webClientBuilder, botClient,
-            subscriptionRepository, linkRepository);
+            subscriptionRepository, linkRepository, objectMapper, scrapperPropsConfig);
     }
 
     @Bean

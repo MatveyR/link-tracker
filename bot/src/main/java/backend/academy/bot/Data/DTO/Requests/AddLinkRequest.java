@@ -1,10 +1,11 @@
 package backend.academy.bot.Data.DTO.Requests;
 
 import jakarta.validation.constraints.NotBlank;
+import java.util.Collection;
 import java.util.List;
 
 public record AddLinkRequest(
     @NotBlank String link,
-    List<String> tags,
-    List<String> filters
+    Collection<String> tags,
+    Collection<String> filters
 ) {}

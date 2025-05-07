@@ -1,8 +1,11 @@
 app:
-  github-token: ${GITHUB_TOKEN}
+  github:
+    timeout: ${GITHUB_REQUEST_TIMEOUT:10}
+    api_url: "https://api.github.com"
+    update-threshold: ${GITHUB_UPDATE_THRESHOLD:1}
   stackoverflow:
-    key: ${SO_TOKEN_KEY}
-    access-token: ${SO_ACCESS_TOKEN}
+    timeout: ${STACKOVERFLOW_REQUEST_TIMEOUT:10}
+    api-url: "https://api.stackexchange.com/2.3"
 
 spring:
   application:
@@ -15,7 +18,7 @@ spring:
     open-in-view: false
 
 server:
-  port: ${SCRAPPER_PORT}
+  port: ${SCRAPPER_PORT:8081}
 
 springdoc:
   swagger-ui:
@@ -24,7 +27,7 @@ springdoc:
 
 bot:
   api:
-    base-url: ${BOT_API_BASE_URL}
+    base-url: ${BOT_API_BASE_URL:http://localhost:8080}
 
 scrapper:
-  interval: ${SCRAPPER_INTERVAL}
+  interval: ${SCRAPPER_INTERVAL:60000}

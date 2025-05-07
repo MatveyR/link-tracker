@@ -2,7 +2,8 @@ package backend.academy.bot.Services;
 
 import backend.academy.bot.Clients.ChatClient;
 import backend.academy.bot.Configs.BotAppConfig;
-import backend.academy.bot.Data.DTO.Requests.LinkUpdate;
+import backend.academy.bot.Data.DTO.Requests.LinkUpdateRequest;
+import backend.academy.bot.Data.Models.ChatCommands;
 import backend.academy.bot.Handlers.BotUpdateHandler;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
@@ -12,8 +13,11 @@ import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SetMyCommands;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BotUpdateService {
@@ -33,22 +37,22 @@ public class BotUpdateService {
             setBotCommands();
             initUpdatesListener();
         } catch (Exception e) {
-            throw new BotInitializationException("Bot initialization failed", e);
+            throw new RuntimeException("Ошибка при конфигурации бота");
         }
     }
 
     private void setBotCommands() {
         try {
             BotCommand[] commands = {
-                new BotCommand("/start", "Запуск бота"),
-                new BotCommand("/help", "Доступные команды"),
-                new BotCommand("/track", "Начать отслеживать ресурс"),
-                new BotCommand("/untrack", "Прекратить отслеживание"),
-                new BotCommand("/list", "Мои отслеживаемые ресурсы")
+                new BotCommand(ChatCommands.START.command(), ChatCommands.START.description()),
+                new BotCommand(ChatCommands.HELP.command(), ChatCommands.HELP.description()),
+                new BotCommand(ChatCommands.TRACK.command(), ChatCommands.TRACK.description()),
+                new BotCommand(ChatCommands.UNTRACK.command(), ChatCommands.UNTRACK.description()),
+                new BotCommand(ChatCommands.LIST.command(), ChatCommands.LIST.description()),
             };
             bot.execute(new SetMyCommands(commands));
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 
@@ -56,25 +60,26 @@ public class BotUpdateService {
         bot.setUpdatesListener(updates -> {
             updates.forEach(updateHandler::handleUpdate);
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
-        }, e -> System.out.println(e.getMessage()));
+        }, e -> log.error(e.getMessage()));
     }
 
-    public void handleIncomingUpdate(LinkUpdate update) {
-        if (update == null || update.tgChatIds() == null || update.tgChatIds().isEmpty()) {
+    public void handleIncomingUpdate(LinkUpdateRequest update) {
+        if (update == null || CollectionUtils.isEmpty(update.tgChatIds())) {
             return;
         }
 
         String message = formatUpdateMessage(update);
+        log.info(message);
         update.tgChatIds().forEach(chatId -> sendNotification(chatId, message));
     }
 
-    private String formatUpdateMessage(LinkUpdate update) {
+    private String formatUpdateMessage(LinkUpdateRequest update) {
         return String.format("""
-            🔔 *Обновление ссылки*
+                🔔 *Обновление ссылки*
 
-            🔗 [%s](%s)
-            📝 %s
-            """,
+                🔗 [%s](%s)
+                📝 %s
+                """,
             escapeMarkdown(update.url()),
             update.url(),
             escapeMarkdown(update.description())
@@ -89,9 +94,7 @@ public class BotUpdateService {
 
     private void sendNotification(Long chatId, String message) {
         try {
-            bot.execute(new SendMessage(chatId, message)
-                .parseMode(ParseMode.MarkdownV2)
-                .disableWebPagePreview(false));
+            bot.execute(new SendMessage(chatId, message).parseMode(ParseMode.Markdown));
         } catch (Exception e) {
             handleFailedNotification(chatId, e);
         }
@@ -102,14 +105,8 @@ public class BotUpdateService {
             try {
                 chatClient.deleteChat(chatId);
             } catch (Exception ex) {
-                System.out.println(ex.getMessage());
+                log.error(ex.getMessage());
             }
-        }
-    }
-
-    public static class BotInitializationException extends RuntimeException {
-        public BotInitializationException(String message, Throwable cause) {
-            super(message, cause);
         }
     }
 }

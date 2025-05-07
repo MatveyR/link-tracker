@@ -1,19 +1,29 @@
 package backend.academy.scrapper.Scrappers;
 
 import backend.academy.scrapper.Clients.BotClient;
+import backend.academy.scrapper.Configs.ScrapperPropsConfig;
 import backend.academy.scrapper.Data.Models.Link;
 import backend.academy.scrapper.Data.Repositories.LinkRepository;
 import backend.academy.scrapper.Data.Repositories.SubscriptionRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import java.time.Duration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Service
 public class StackOverflowScrapper extends BaseScrapper {
-    private static final String STACKOVERFLOW_API_URL = "https://api.stackexchange.com/2.3";
+    @Autowired
+    private ScrapperPropsConfig scrapperPropsConfig;
+
+    private static String STACKOVERFLOW_API_URL;
+    private static Duration REQUEST_TIMEOUT;
 
     public StackOverflowScrapper(WebClient.Builder webClientBuilder,
                                  BotClient botClient,
@@ -23,6 +33,12 @@ public class StackOverflowScrapper extends BaseScrapper {
             botClient,
             subscriptionRepository,
             linkRepository);
+    }
+
+    @PostConstruct
+    private void init() {
+        STACKOVERFLOW_API_URL = scrapperPropsConfig.stackOverflow().api_url();
+        REQUEST_TIMEOUT = Duration.ofSeconds(scrapperPropsConfig.stackOverflow().timeout());
     }
 
     @Override
@@ -46,9 +62,9 @@ public class StackOverflowScrapper extends BaseScrapper {
         try {
             String response = fetchQuestionData(link);
             JsonNode jsonNode = new ObjectMapper().readTree(response);
-            return checkForUpdates(link, jsonNode);
+            return checkForUpdates(jsonNode);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
             return false;
         }
     }
@@ -72,7 +88,7 @@ public class StackOverflowScrapper extends BaseScrapper {
         throw new IllegalArgumentException("Неверная ссылка на вопрос StackOverflow: " + url);
     }
 
-    private boolean checkForUpdates(Link link, JsonNode data) {
+    private boolean checkForUpdates(JsonNode data) {
         return data.path("items").get(0).path("answer_count").asInt() > 0;
     }
 }
