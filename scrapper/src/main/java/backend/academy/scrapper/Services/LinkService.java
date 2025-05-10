@@ -30,12 +30,12 @@ public class LinkService {
                 .filter(l -> l.linkUrl().equals(request.link()))
                 .findFirst()
                 .orElseGet(() -> {
-                    Link newLink = new Link(linkRepository.count(), request.link());
+                    Link newLink = new Link(null, request.link());
                     return linkRepository.save(newLink);
                 });
 
         Subscription subscription =
-                new Subscription(subscriptionRepository.count(), chatId, link.id(), request.tags(), request.filters());
+                new Subscription(null, chatId, link.id(), request.tags(), request.filters());
         subscriptionRepository.save(subscription);
 
         return mapToLinkResponse(link, subscription);

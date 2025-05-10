@@ -1,0 +1,6 @@
+databaseChangeLog:
+  - include:
+      file: file:C:\Programming\JavaWorkspace\java-MatveyR\migrations\initial-schema.yaml
+  - include:
+      file: file:C:\Programming\JavaWorkspace\java-MatveyR\migrations\tags-filters-rework.yaml
+

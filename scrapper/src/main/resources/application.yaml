@@ -11,11 +11,16 @@ spring:
   application:
     name: Scrapper
   liquibase:
-    enabled: false
+    enabled: true
+    change-log: file:C:\Programming\JavaWorkspace\java-MatveyR\migrations\db.changelog-master.yaml
   jpa:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/scrappers
+    username: postgres
+    password: root
 
 server:
   port: ${SCRAPPER_PORT:8081}

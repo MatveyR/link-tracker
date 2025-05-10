@@ -1,12 +1,7 @@
 package backend.academy.scrapper.Data.Repositories;
 
 import backend.academy.scrapper.Data.Models.Chat;
-import org.springframework.stereotype.Repository;
+import backend.academy.scrapper.Data.Repositories.JdbcRepositories.BaseRepository;
 
-@Repository
-public class ChatRepository extends BaseMapRepository<Chat> {
-    @Override
-    protected Long getId(Chat entity) {
-        return entity.id();
-    }
+public interface ChatRepository extends BaseRepository<Chat, Long> {
 }

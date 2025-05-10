@@ -1,0 +1,96 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: your_name
+      changes:
+        - createTable:
+            tableName: chats
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: creation_date
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 2
+      author: your_name
+      changes:
+        - createTable:
+            tableName: links
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: url
+                  type: VARCHAR(2048)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+  - changeSet:
+      id: 3
+      author: your_name
+      changes:
+        - createTable:
+            tableName: subscriptions
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: chat_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: link_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: subscription_tags
+            columns:
+              - column:
+                  name: subscription_id
+                  type: BIGINT
+              - column:
+                  name: tag
+                  type: VARCHAR(255)
+        - createTable:
+            tableName: subscription_filters
+            columns:
+              - column:
+                  name: subscription_id
+                  type: BIGINT
+              - column:
+                  name: filter
+                  type: VARCHAR(255)
+        - addForeignKeyConstraint:
+            baseTableName: subscriptions
+            baseColumnNames: chat_id
+            referencedTableName: chats
+            referencedColumnNames: id
+            constraintName: fk_subscription_chat
+        - addForeignKeyConstraint:
+            baseTableName: subscriptions
+            baseColumnNames: link_id
+            referencedTableName: links
+            referencedColumnNames: id
+            constraintName: fk_subscription_link

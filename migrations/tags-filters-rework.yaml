@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4
+      author: Matvey Rudinskiy
+      changes:
+        - addColumn:
+            tableName: subscriptions
+            columns:
+              - column:
+                  name: tags
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: filters
+                  type: TEXT
+                  constraints:
+                    nullable: true
+
+        - dropTable:
+            tableName: subscription_tags
+
+        - dropTable:
+            tableName: subscription_filters
+
+      rollback:
+        - createTable:
+            tableName: subscription_tags
+            columns:
+              - column:
+                  name: subscription_id
+                  type: BIGINT
+              - column:
+                  name: tag
+                  type: VARCHAR(255)
+
+        - createTable:
+            tableName: subscription_filters
+            columns:
+              - column:
+                  name: subscription_id
+                  type: BIGINT
+              - column:
+                  name: filter
+                  type: VARCHAR(255)
+
+        - dropColumn:
+            tableName: subscriptions
+            columnName: tags
+
+        - dropColumn:
+            tableName: subscriptions
+            columnName: filters

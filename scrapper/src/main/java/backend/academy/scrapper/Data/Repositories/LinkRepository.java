@@ -1,12 +1,8 @@
 package backend.academy.scrapper.Data.Repositories;
 
 import backend.academy.scrapper.Data.Models.Link;
-import org.springframework.stereotype.Repository;
+import backend.academy.scrapper.Data.Repositories.JdbcRepositories.BaseRepository;
 
-@Repository
-public class LinkRepository extends BaseMapRepository<Link> {
-    @Override
-    protected Long getId(Link entity) {
-        return entity.id();
-    }
+public interface LinkRepository extends BaseRepository<Link, Long> {
+    Link findByUrl(String url);
 }
