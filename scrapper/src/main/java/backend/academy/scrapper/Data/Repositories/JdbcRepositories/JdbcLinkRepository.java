@@ -87,9 +87,6 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     private Link mapLink(ResultSet rs) throws SQLException {
-        return new Link(
-            rs.getLong("id"),
-            rs.getString("url")
-        );
+        return new Link(rs.getLong("id"), rs.getString("url"));
     }
 }

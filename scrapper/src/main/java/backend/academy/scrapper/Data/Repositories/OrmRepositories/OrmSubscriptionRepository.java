@@ -3,12 +3,12 @@ package backend.academy.scrapper.Data.Repositories.OrmRepositories;
 import backend.academy.scrapper.Data.Models.Subscription;
 import backend.academy.scrapper.Data.Repositories.OrmRepositories.SpringJpaRepositories.SpringJpaSubscriptionRepository;
 import backend.academy.scrapper.Data.Repositories.SubscriptionRepository;
-import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Repository;
 
 @Repository
 @Profile("orm")

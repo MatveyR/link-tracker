@@ -2,9 +2,9 @@ package backend.academy.scrapper.Data.Repositories.OrmRepositories;
 
 import backend.academy.scrapper.Data.Models.Chat;
 import backend.academy.scrapper.Data.Repositories.ChatRepository;
+import backend.academy.scrapper.Data.Repositories.OrmRepositories.SpringJpaRepositories.SpringJpaChatRepository;
 import java.util.Collection;
 import java.util.Optional;
-import backend.academy.scrapper.Data.Repositories.OrmRepositories.SpringJpaRepositories.SpringJpaChatRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;

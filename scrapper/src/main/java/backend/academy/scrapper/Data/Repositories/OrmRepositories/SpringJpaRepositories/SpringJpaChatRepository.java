@@ -3,5 +3,4 @@ package backend.academy.scrapper.Data.Repositories.OrmRepositories.SpringJpaRepo
 import backend.academy.scrapper.Data.Models.Chat;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SpringJpaChatRepository extends JpaRepository<Chat, Long> {
-}
+public interface SpringJpaChatRepository extends JpaRepository<Chat, Long> {}

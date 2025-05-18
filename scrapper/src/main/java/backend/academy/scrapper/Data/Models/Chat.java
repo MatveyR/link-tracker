@@ -10,6 +10,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "chats")
-public record Chat(@Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id,
-                   @Column(name = "creation_date", nullable = false) LocalDateTime creationDate) {
-}
+public record Chat(
+        @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id,
+        @Column(name = "creation_date", nullable = false) LocalDateTime creationDate) {}

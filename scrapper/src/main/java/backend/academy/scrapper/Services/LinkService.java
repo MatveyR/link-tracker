@@ -34,8 +34,7 @@ public class LinkService {
                     return linkRepository.save(newLink);
                 });
 
-        Subscription subscription =
-                new Subscription(null, chatId, link.id(), request.tags(), request.filters());
+        Subscription subscription = new Subscription(null, chatId, link.id(), request.tags(), request.filters());
         subscriptionRepository.save(subscription);
 
         return mapToLinkResponse(link, subscription);

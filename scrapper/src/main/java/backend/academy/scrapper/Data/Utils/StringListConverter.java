@@ -18,8 +18,8 @@ public class StringListConverter implements AttributeConverter<List<String>, Str
 
     @Override
     public List<String> convertToEntityAttribute(String string) {
-        return string == null ? Collections.emptyList()
-            : Arrays.stream(string.split(SPLIT_CHAR))
-            .collect(Collectors.toList());
+        return string == null
+                ? Collections.emptyList()
+                : Arrays.stream(string.split(SPLIT_CHAR)).collect(Collectors.toList());
     }
 }

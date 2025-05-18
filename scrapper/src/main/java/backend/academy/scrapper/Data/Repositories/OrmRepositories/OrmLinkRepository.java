@@ -2,9 +2,9 @@ package backend.academy.scrapper.Data.Repositories.OrmRepositories;
 
 import backend.academy.scrapper.Data.Models.Link;
 import backend.academy.scrapper.Data.Repositories.LinkRepository;
+import backend.academy.scrapper.Data.Repositories.OrmRepositories.SpringJpaRepositories.SpringJpaLinkRepository;
 import java.util.Collection;
 import java.util.Optional;
-import backend.academy.scrapper.Data.Repositories.OrmRepositories.SpringJpaRepositories.SpringJpaLinkRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;

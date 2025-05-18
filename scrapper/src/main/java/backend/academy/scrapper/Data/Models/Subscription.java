@@ -17,7 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name="subscriptions")
+@Table(name = "subscriptions")
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class Subscription {
