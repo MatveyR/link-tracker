@@ -125,8 +125,13 @@ public class JdbcSubscriptionRepository implements SubscriptionRepository {
 
     @Override
     public long count() {
-        String sql = "SELECT COUNT(*) FROM subscriptions";
-        return jdbcTemplate.queryForObject(sql, Long.class);
+        try {
+            Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM subscriptions", Long.class);
+            return count != null ? count : 0L;
+        } catch (Exception ex) {
+            log.error("Error counting subscriptions", ex);
+            throw ex;
+        }
     }
 
     private Subscription mapSubscription(ResultSet rs) throws SQLException {

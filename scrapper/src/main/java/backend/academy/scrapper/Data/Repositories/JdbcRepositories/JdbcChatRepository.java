@@ -67,7 +67,7 @@ public class JdbcChatRepository implements ChatRepository {
                 throw new EmptyResultDataAccessException(String.format("No chat found with id %d", id), 1);
             }
         } catch (Exception ex) {
-            log.error(ex.getMessage(), ex);
+            log.error("Error deleting chat with id {}", id, ex);
             throw ex;
         }
     }
@@ -82,10 +82,10 @@ public class JdbcChatRepository implements ChatRepository {
             Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM chats WHERE id = ?", Integer.class, id);
             return count != null && count > 0;
         } catch (EmptyResultDataAccessException e) {
-            log.error(e.getMessage(), e);
+            log.error("Error checking existence of chat with id {}", id, e);
             return false;
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("Error checking existence of chat with id {}", id, e);
             throw e;
         }
     }
@@ -96,7 +96,7 @@ public class JdbcChatRepository implements ChatRepository {
             Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM chats", Long.class);
             return count != null ? count : 0L;
         } catch (Exception ex) {
-            log.error(ex.getMessage(), ex);
+            log.error("Error counting chats", ex);
             throw ex;
         }
     }

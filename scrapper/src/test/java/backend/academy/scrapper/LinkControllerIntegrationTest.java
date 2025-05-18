@@ -42,7 +42,7 @@ public class LinkControllerIntegrationTest {
         // When & Then
         mockMvc.perform(
                         post("/links")
-                                .header("Tg-Chat-Id", "1")
+                                .header("Tg-Chat-Id", "693227891")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(
                                         """

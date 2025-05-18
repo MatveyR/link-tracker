@@ -82,8 +82,13 @@ public class JdbcLinkRepository implements LinkRepository {
 
     @Override
     public long count() {
-        String sql = "SELECT COUNT(*) FROM links";
-        return jdbcTemplate.queryForObject(sql, Long.class);
+        try {
+            Long count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM links", Long.class);
+            return count != null ? count : 0L;
+        } catch (Exception ex) {
+            log.error("Error counting links", ex);
+            throw ex;
+        }
     }
 
     private Link mapLink(ResultSet rs) throws SQLException {
