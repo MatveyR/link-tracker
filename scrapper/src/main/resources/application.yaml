@@ -7,6 +7,9 @@ app:
     timeout: ${STACKOVERFLOW_REQUEST_TIMEOUT:10}
     api-url: "https://api.stackexchange.com/2.3"
 
+data:
+  access-type: ${DB_ACCESS_TYPE:ORM}
+
 spring:
   application:
     name: Scrapper
