@@ -26,6 +26,7 @@ databaseChangeLog:
       rollback:
         - createTable:
             tableName: subscription_tags
+            ifNotExists: true
             columns:
               - column:
                   name: subscription_id
@@ -36,6 +37,7 @@ databaseChangeLog:
 
         - createTable:
             tableName: subscription_filters
+            ifNotExists: true
             columns:
               - column:
                   name: subscription_id

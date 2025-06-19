@@ -1,0 +1,6 @@
+databaseChangeLog:
+  - include:
+      file: classpath:/migrations/initial-schema.yaml
+  - include:
+      file: classpath:/migrations/tags-filters-rework.yaml
+

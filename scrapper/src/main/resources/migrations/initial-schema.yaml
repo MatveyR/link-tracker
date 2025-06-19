@@ -5,6 +5,7 @@ databaseChangeLog:
       changes:
         - createTable:
             tableName: chats
+            ifNotExists: true
             columns:
               - column:
                   name: id
@@ -25,6 +26,7 @@ databaseChangeLog:
       changes:
         - createTable:
             tableName: links
+            ifNotExists: true
             columns:
               - column:
                   name: id
@@ -46,6 +48,7 @@ databaseChangeLog:
       changes:
         - createTable:
             tableName: subscriptions
+            ifNotExists: true
             columns:
               - column:
                   name: id
@@ -66,6 +69,7 @@ databaseChangeLog:
                     nullable: false
         - createTable:
             tableName: subscription_tags
+            ifNotExists: true
             columns:
               - column:
                   name: subscription_id
@@ -75,6 +79,7 @@ databaseChangeLog:
                   type: VARCHAR(255)
         - createTable:
             tableName: subscription_filters
+            ifNotExists: true
             columns:
               - column:
                   name: subscription_id
