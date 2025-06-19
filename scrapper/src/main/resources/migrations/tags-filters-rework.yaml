@@ -17,39 +17,49 @@ databaseChangeLog:
                   constraints:
                     nullable: true
 
-        - dropTable:
-            tableName: subscription_tags
+              - dropForeignKeyConstraint:
+                  baseTableName: subscription_tags
+                  constraintName: fk_subscription_tags_subscription
+                  ifExists: true
 
-        - dropTable:
-            tableName: subscription_filters
+              - dropForeignKeyConstraint:
+                  baseTableName: subscription_filters
+                  constraintName: fk_subscription_filters_subscription
+                  ifExists: true
 
-      rollback:
-        - createTable:
-            tableName: subscription_tags
-            ifNotExists: true
-            columns:
-              - column:
-                  name: subscription_id
-                  type: BIGINT
-              - column:
-                  name: tag
-                  type: VARCHAR(255)
+              - dropTable:
+                  tableName: subscription_tags
+                  ifExists: true
 
-        - createTable:
-            tableName: subscription_filters
-            ifNotExists: true
-            columns:
-              - column:
-                  name: subscription_id
-                  type: BIGINT
-              - column:
-                  name: filter
-                  type: VARCHAR(255)
+              - dropTable:
+                  tableName: subscription_filters
+                  ifExists: true
 
-        - dropColumn:
-            tableName: subscriptions
-            columnName: tags
+            rollback:
+              - createTable:
+                  tableName: subscription_tags
+                  columns:
+                    - column:
+                        name: subscription_id
+                        type: BIGINT
+                    - column:
+                        name: tag
+                        type: VARCHAR(255)
 
-        - dropColumn:
-            tableName: subscriptions
-            columnName: filters
+              - createTable:
+                  tableName: subscription_filters
+                  columns:
+                    - column:
+                        name: subscription_id
+                        type: BIGINT
+                    - column:
+                        name: filter
+                        type: VARCHAR(255)
+
+              - dropColumn:
+                  tableName: subscriptions
+                  columnName: tags
+
+              - dropColumn:
+                  tableName: subscriptions
+                  columnName: filters
