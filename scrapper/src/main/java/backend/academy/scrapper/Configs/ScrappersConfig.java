@@ -1,11 +1,10 @@
 package backend.academy.scrapper.Configs;
 
-import backend.academy.scrapper.Clients.BotClient;
 import backend.academy.scrapper.Data.Repositories.LinkRepository;
-import backend.academy.scrapper.Data.Repositories.SubscriptionRepository;
 import backend.academy.scrapper.Scrappers.GitHubScrapper;
 import backend.academy.scrapper.Scrappers.Scrapper;
 import backend.academy.scrapper.Scrappers.StackOverflowScrapper;
+import backend.academy.scrapper.Services.NotificationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
@@ -18,23 +17,21 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class ScrappersConfig {
     @Bean
     public GitHubScrapper gitHubScrapper(
-            WebClient.Builder webClientBuilder,
-            BotClient botClient,
-            SubscriptionRepository subscriptionRepository,
-            LinkRepository linkRepository,
-            ObjectMapper objectMapper,
-            ScrapperPropsConfig scrapperPropsConfig) {
+        WebClient.Builder webClientBuilder,
+        LinkRepository linkRepository,
+        ObjectMapper objectMapper,
+        ScrapperPropsConfig scrapperPropsConfig,
+        NotificationService notificationService) {
         return new GitHubScrapper(
-                webClientBuilder, botClient, subscriptionRepository, linkRepository, objectMapper, scrapperPropsConfig);
+            webClientBuilder, linkRepository, objectMapper, scrapperPropsConfig, notificationService);
     }
 
     @Bean
     public StackOverflowScrapper stackOverflowScrapper(
-            WebClient.Builder webClientBuilder,
-            BotClient botClient,
-            SubscriptionRepository subscriptionRepository,
-            LinkRepository linkRepository) {
-        return new StackOverflowScrapper(webClientBuilder, botClient, subscriptionRepository, linkRepository);
+        WebClient.Builder webClientBuilder,
+        LinkRepository linkRepository,
+        NotificationService notificationService) {
+        return new StackOverflowScrapper(webClientBuilder, linkRepository, notificationService);
     }
 
     @Bean

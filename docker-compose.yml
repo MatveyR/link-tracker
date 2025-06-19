@@ -12,12 +12,11 @@ services:
       - SPRING_APPLICATION_NAME=Scrapper
       - BOT_API_BASE_URL=http://bot:8080
       - SCRAPPER_INTERVAL=100000
-      - GITHUB_TOKEN=${GITHUB_TOKEN}
-      - SO_TOKEN_KEY=${SO_TOKEN_KEY}
-      - SO_ACCESS_TOKEN=${SO_ACCESS_TOKEN}
     ports:
       - "8081:8081"
     restart: unless-stopped
+    networks:
+      - app-network
 
   bot:
     build:
@@ -35,3 +34,45 @@ services:
     depends_on:
       - scrapper
     restart: unless-stopped
+    networks:
+      - app-network
+
+  postgresql:
+    image: postgres:15
+    container_name: postgresql
+    environment:
+      - POSTGRES_DB=scrapper
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  liquibase-migrations:
+    container_name: liquibase-migrations
+    image: liquibase/liquibase:4.29
+    depends_on:
+      - postgresql
+    command:
+      - --searchPath=/
+      - --changelog-file=db.changelog-master.yaml
+      - --driver=org.postgresql.Driver
+      - --url=jdbc:postgresql://postgresql:5432/scrapper
+      - --username=postgres
+      - --password=postgres
+      - update
+    volumes:
+      - ./migrations:/changesets
+    networks:
+      - app-network
+
+volumes:
+  postgres-data:
+
+networks:
+  app-network:
+    driver: bridge

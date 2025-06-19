@@ -1,0 +1,6 @@
+databaseChangeLog:
+  - include:
+      file: initial-schema.yaml
+  - include:
+      file: tags-filters-rework.yaml
+

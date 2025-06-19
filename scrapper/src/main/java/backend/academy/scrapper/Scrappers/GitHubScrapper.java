@@ -1,10 +1,9 @@
 package backend.academy.scrapper.Scrappers;
 
-import backend.academy.scrapper.Clients.BotClient;
 import backend.academy.scrapper.Configs.ScrapperPropsConfig;
 import backend.academy.scrapper.Data.Models.Link;
 import backend.academy.scrapper.Data.Repositories.LinkRepository;
-import backend.academy.scrapper.Data.Repositories.SubscriptionRepository;
+import backend.academy.scrapper.Services.NotificationService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Clock;
@@ -28,18 +27,16 @@ public class GitHubScrapper extends BaseScrapper {
     private final ObjectMapper objectMapper;
 
     public GitHubScrapper(
-            WebClient.Builder webClientBuilder,
-            BotClient botClient,
-            SubscriptionRepository subscriptionRepository,
-            LinkRepository linkRepository,
-            ObjectMapper objectMapper,
-            ScrapperPropsConfig propsConfig) {
+        WebClient.Builder webClientBuilder,
+        LinkRepository linkRepository,
+        ObjectMapper objectMapper,
+        ScrapperPropsConfig propsConfig,
+        NotificationService notificationService) {
 
         super(
-                webClientBuilder.baseUrl(propsConfig.github().api_url()).build(),
-                botClient,
-                subscriptionRepository,
-                linkRepository);
+            webClientBuilder.baseUrl(propsConfig.github().api_url()).build(),
+            linkRepository,
+            notificationService);
 
         this.objectMapper = objectMapper;
         REQUEST_TIMEOUT = Duration.ofSeconds(propsConfig.github().timeout());
@@ -49,19 +46,22 @@ public class GitHubScrapper extends BaseScrapper {
     @Override
     public void trackUpdates() {
         linkRepository.findAll().stream()
-                .filter(link -> link.linkUrl().contains("github.com"))
-                .forEach(link -> {
-                    try {
-                        if (hasUpdates(link)) {
-                            log.info("Обновлено: {}", link.linkUrl());
-                            notifySubscribers(link);
-                        } else {
-                            log.info("Не обновлено: {}", link.linkUrl());
-                        }
-                    } catch (Exception e) {
-                        log.error("Ошибка проверки обновлений гитхаб: {}", e.getMessage());
+            .filter(link -> link.linkUrl().contains("github.com"))
+            .forEach(link -> {
+                try {
+                    if (hasUpdates(link)) {
+                        String apiPath = convertToApiPath(link.linkUrl());
+                        RepositoryInfo repoInfo = fetchRepositoryInfo(apiPath);
+                        String notificationMessage = createNotificationMessage(repoInfo);
+                        log.info("Обновлено: {}", link.linkUrl());
+                        notificationService.notifySubscribers(link, notificationMessage);
+                    } else {
+                        log.info("Не обновлено: {}", link.linkUrl());
                     }
-                });
+                } catch (Exception e) {
+                    log.error("Ошибка проверки обновлений гитхаб: {}", e.getMessage());
+                }
+            });
     }
 
     @Override
@@ -73,35 +73,55 @@ public class GitHubScrapper extends BaseScrapper {
         return lastUpdated.isAfter(lastChecked);
     }
 
-    @Override
-    protected String prepareUpdateMessage(Link link) {
-        return "Обновление на GitHub";
-    }
-
     private String convertToApiPath(String repoUrl) {
         return repoUrl.replace("https://github.com/", "/repos/").replaceAll("/$", "");
     }
 
+    private String createNotificationMessage(RepositoryInfo repoInfo) {
+        return String.format(
+            "Репозиторий обновлен!\n\n" +
+                "Название: %s\n" +
+                "Владелец: %s\n" +
+                "Последнее обновление: %s\n" +
+                "Описание: %s\n\n" +
+                "Ссылка: https://github.com/%s/%s",
+            repoInfo.name(),
+            repoInfo.ownerLogin(),
+            repoInfo.pushedAt().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")),
+            repoInfo.description(),
+            repoInfo.ownerLogin(),
+            repoInfo.name()
+        );
+    }
+
     @Retryable(
-            retryFor = {
-                WebClientResponseException.TooManyRequests.class,
-                WebClientResponseException.ServiceUnavailable.class
-            },
-            maxAttempts = 3,
-            backoff = @Backoff(delay = 1000, multiplier = 2))
-    private Instant fetchLastUpdateTime(String apiPath) {
+        retryFor = {
+            WebClientResponseException.TooManyRequests.class,
+            WebClientResponseException.ServiceUnavailable.class
+        },
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 1000, multiplier = 2))
+    private RepositoryInfo fetchRepositoryInfo(String apiPath) {
         try {
             String response = webClient
-                    .get()
-                    .uri(apiPath)
-                    .header("Accept", "application/vnd.github.v3+json")
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block(REQUEST_TIMEOUT);
+                .get()
+                .uri(apiPath)
+                .header("Accept", "application/vnd.github.v3+json")
+                .retrieve()
+                .bodyToMono(String.class)
+                .block(REQUEST_TIMEOUT);
 
             JsonNode repoData = objectMapper.readTree(response);
-            String updatedAt = repoData.path("pushed_at").asText();
-            return Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(updatedAt));
+
+            String name = repoData.path("name").asText();
+            String ownerLogin = repoData.path("owner").path("login").asText();
+            String description = repoData.path("description").asText("(нет описания)");
+            if (description.length() > 200) {
+                description = description.substring(0, 200) + "...";
+            }
+            Instant pushedAt = Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(repoData.path("pushed_at").asText()));
+
+            return new RepositoryInfo(name, ownerLogin, description, pushedAt);
         } catch (WebClientResponseException e) {
             log.error("Ошибка при запросе к github: {}", e.getMessage());
             throw new RuntimeException("Ошибка при запросе к GitHub API", e);
@@ -109,5 +129,18 @@ public class GitHubScrapper extends BaseScrapper {
             log.error("Ошибка обработки ответа github: {}", e.getMessage());
             throw new RuntimeException("Неизвестная ошибка при обработке ответа Github", e);
         }
+    }
+
+    private Instant fetchLastUpdateTime(String apiPath) {
+        RepositoryInfo repoInfo = fetchRepositoryInfo(apiPath);
+        return repoInfo.pushedAt();
+    }
+
+    private record RepositoryInfo(
+        String name,
+        String ownerLogin,
+        String description,
+        Instant pushedAt
+    ) {
     }
 }
